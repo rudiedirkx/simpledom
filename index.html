@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>simpledom</title>
+	<meta charset="utf-8" />
+	<script src="simpledom.js"></script>
+</head>
+
+<body>
+
+<script>
+window.onload = function() {
+	elements = [
+		['p', {}, '', {}, ['Hi there, ', {}, '', {}, ['a', {href: '/blog-user/view/3', title: 'This is you!'}, 'YourNameHere', {}, []], '.']],
+		['p', {}, '', {}, ['Second paragraphs always suck...']]
+	]
+	elements = ['div', {}, '', {}, elements]
+
+	var div = simpledom(elements)[0]
+console.log(div)
+
+	document.body.appendChild(div)
+}
+</script>
+
+</body>
+
+</html>
