@@ -11,16 +11,27 @@
 
 <script>
 window.onload = function() {
-	elements = [
-		['p', {}, '', {}, ['Hi there, ', {}, '', {}, ['a', {href: '/blog-user/view/3', title: 'This is you!'}, 'YourNameHere', {}, []], '.']],
-		['p', {}, '', {}, ['Second paragraphs always suck...']]
-	]
-	elements = ['div', {}, '', {}, elements]
+	/**
+	 * HTML:
+		<div>
+			<p>Hi there, <a href title>YourNameHere</p>.</p>
+			<p>Second paragraphs always suck...</p>
+		</div>
+	 */
 
-	var div = simpledom(elements)[0]
-console.log(div)
+	/**
+	 * JSON:
+	 */
+	elements = ['div', {}, {}, [
+		['p', {}, {}, [
+			'Hi there, ',
+			['a', {href: '/blog-user/view/3', title: 'This is you!'}, {}, 'YourNameHere'],
+			'.'
+		]],
+		['p', {}, {}, ['Second paragraphs always suck...']]
+	]]
 
-	document.body.appendChild(div)
+	simpledom(elements, document.body)
 }
 </script>
 
