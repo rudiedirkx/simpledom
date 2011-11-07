@@ -1,5 +1,5 @@
 
-//(function() {
+(function() {
 
 	function gettype( element ) {
 		var t = typeof element
@@ -36,18 +36,17 @@
 		var attrName, evName, L, i
 
 		// create element
-console.log('tag:', tag)
 		var el = document.createElement(tag)
 
 		// attach attributes
-		/*for ( attrName in attributes ) {
+		for ( attrName in attributes ) {
 			if ( attributes.hasOwnProperty(attrName) ) {
 				el.setAttribute(attrName, attributes[attrName])
 			}
-		}*/
+		}
 
 		// attach events
-		/*for ( evName in events ) {
+		for ( evName in events ) {
 			if ( events.hasOwnProperty(evName) ) {
 				if ( 'function' == typeof events[evName] ) {
 					events[evName] = [events[evName]]
@@ -56,10 +55,9 @@ console.log('tag:', tag)
 					el.addEventListener(evName, events[evName][i], false)
 				}
 			}
-		}*/
+		}
 
 		// append children
-console.log('children:', children)
 		if ( 'string' == gettype(children) ) {
 			children = [children]
 		}
@@ -77,7 +75,6 @@ console.log('children:', children)
 	}
 
 	simpledom = function( elements, container ) {
-console.log('input elements:', gettype(elements))
 		if ( 'elements' != gettype(elements) ) {
 			elements = [elements]
 		}
@@ -97,4 +94,4 @@ console.log('input elements:', gettype(elements))
 		return out
 	}
 
-//})()
+})()

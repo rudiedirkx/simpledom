@@ -32,6 +32,22 @@ window.onload = function() {
 	]]
 
 	simpledom(elements, document.body)
+
+	/**
+	 * and a table
+	 */
+	simpledom(['table', {border: 1, cellpadding: 5, cellspacing: 0}, {click: function(){ alert(this.outerHTML); alert(this.innerText) }}, [
+		['tr', {}, {}, [
+			['td', {class: 'disabled'}, {}, 'data 1'],
+			['td', {}, {}, 'data 2']
+		]],
+		['tr', {}, {}, [
+			['td', {class: 'disabled'}, {}, 'data 3'],
+			['td', {}, {}, 'data 4']
+		]]
+		// etc
+	]], document.body)
+
 }
 </script>
 
