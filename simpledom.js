@@ -1,97 +1,139 @@
 
 (function() {
 
-	function gettype( element ) {
-		var t = typeof element
-
-		// array or object
-		if ( 'object' == t ) {
-			// array
-			if ( undefined != element[0] || 0 === element.length ) {
-				// 1 element
-				if ( 'string' == typeof element[0] && ( !elements[1] || 'attributes' == gettype(elements[1]) ) ) {
-					return 'element'
-				}
-
-				// list of (text?) elements
-				return 'elements'
+	function each( iterable, callback ) {
+		for ( var x in iterable ) {
+			if ( iterable.hasOwnProperty(x) ) {
+				callback(iterable[x], x, iterable)
 			}
-
-			// hash of events
-			for ( x in element ) {
-				if ( 'function' == typeof element[x] || 'function' == typeof element[x][0] ) {
-					return 'events'
-				}
-			}
-
-			// hash of attributes
-			return 'attributes'
 		}
-
-		// string or function
-		return t
 	}
 
-	function element( tag, attributes, events, children ) {
-		var attrName, evName, L, i
+	var is = {
+		content: function( el ) {
+			return 'string' == typeof el || el instanceof Array
+		},
+		events: function( el ) {
+			if ( Object == el.constructor ) {
+				for ( var x in el ) {
+					if ( el.hasOwnProperty(x) ) {
+						return 'function' == typeof el[x] || el[x] instanceof Array
+					}
+				}
+			}
+			return false
+		},
+		attributes: function( el ) {
+			if ( Object == el.constructor ) {
+				return !is.events(el)
+			}
+			return false
+		}
+	}
 
-		// create element
-		var el = document.createElement(tag)
+	// create 1 simple element (with children)
+	simple = function( type ) {
+		var attributes, events, content
 
-		// attach attributes
-		for ( attrName in attributes ) {
-			if ( attributes.hasOwnProperty(attrName) ) {
-				el.setAttribute(attrName, attributes[attrName])
+		// arguments
+		for ( var i=1, L=arguments.length; i<L; i++ ) {
+			if ( is.attributes(arguments[i]) ) {
+				attributes = arguments[i]
+			}
+			else if ( is.events(arguments[i]) ) {
+				events = arguments[i]
+			}
+			else if ( is.content(arguments[i]) ) {
+				content = arguments[i]
 			}
 		}
 
-		// attach events
-		for ( evName in events ) {
-			if ( events.hasOwnProperty(evName) ) {
-				if ( 'function' == typeof events[evName] ) {
-					events[evName] = [events[evName]]
+		// create node
+		var el = document.createElement(type)
+
+		// assign attributes
+		if ( attributes ) {
+			each(attributes, function(value, name) {
+				el.setAttribute(name, value)
+			})
+		}
+
+		// assign events
+		if ( events ) {
+			each(events, function(evs, name) {
+				evs instanceof Array || (evs = [evs])
+				for ( var i=0, L=evs.length; i<L; i++ ) {
+					simple.event(el, name, evs[i])
 				}
-				for ( i=0, L=events[evName].length; i<L; i++ ) {
-					el.addEventListener(evName, events[evName][i], false)
-				}
-			}
+			})
 		}
 
 		// append children
-		if ( 'string' == gettype(children) ) {
-			children = [children]
-		}
-
-		for ( i=0, L=children.length; i<L; i++ ) {
-			if ( 'string' == gettype(children[i]) ) {
-				el.appendChild(document.createTextNode(children[i]))
-			}
-			else {
-				el.appendChild(element.apply(null, children[i]))
+		if ( content ) {
+			content instanceof Array || (content = [content])
+			for ( var i=0, L=content.length; i<L; i++ ) {
+				if ( content[i].nodeName ) {
+					el.appendChild(content[i])
+				}
+				else {
+					el.appendChild(document.createTextNode(''+content[i]))
+				}
 			}
 		}
 
 		return el
 	}
 
-	simpledom = function( elements, container ) {
-		if ( 'elements' != gettype(elements) ) {
-			elements = [elements]
+	// event assignment + handling
+
+	simple.event = function( node, type, callback ) {
+		if ( 'function' == typeof node.addEventListener ) {
+			return node.addEventListener(type, callback, false)
 		}
 
-		for ( var out=[], i=0, L=elements.length; i<L; i++ ) {
-			out.push(element.apply(null, elements[i]))
+		if ( node.attachEvent ) {
+			return node.attachEvent('on' + type, (function(callback) {
+				return function() {
+					var e = window.event
+					e.preventDefault = function() {
+						this.returnValue = false
+						return false
+					}
+					e.target = e.srcElement
+					callback.call(node, e)
+				}
+			})(callback))
+		}
+	}
+
+	// dom injection helpers
+
+	simple.first = function( reference, node ) {
+		if ( reference.firstChild ) {
+			return simple.before(reference.firstChild, node)
 		}
 
-		if ( container ) {
-			for ( i=0; i<L; i++ ) {
-				container.appendChild(out[i])
-			}
+		return simple.last(reference, node)
+	}
 
-			return container
+	simple.last = function( reference, node ) {
+		return reference.appendChild(node)
+	}
+
+	simple.before = function( reference, node ) {
+		return reference.parentNode.insertBefore(node, reference)
+	}
+
+	simple.after = function( reference, node ) {
+		if ( reference.nextSibling ) {
+			return simple.before(reference.nextSibling, node)
 		}
 
-		return out
+		return simple.last(reference.parentNode, node)
+	}
+
+	simple.replace = function( reference, node ) {
+		return reference.parentNode.replaceChild(node, reference)
 	}
 
 })()

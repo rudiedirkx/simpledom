@@ -13,24 +13,35 @@ append it to some div. Or maybe replace other content with it.
 You might want to make a table.
 
 	var table = document.createElement('table'), tr, td
+	// loop through the response:
 	tr = table.insertRow(table.rows.length)
 	td = tr.insertCell(tr.cells.length)
 	td.setAttribute('class', 'disabled')
-	td.innerHTML = AJAXRESPONSE[0][0]
+	td.innerHTML = AJAXRESPONSE[i][0]
 	td = tr.insertCell(tr.cells.length)
 	td.setAttribute('class', 'email')
-	td.innerHTML = AJAXRESPONSE[0][1]
-	// etc
-	container.appendChild(table)
+	td.innerHTML = AJAXRESPONSE[i][1]
 
 ### Better solution
 
 Make a table.
 
-	simpledom(['table', {}, [
-		['tr', {}, [
-			['td', {class: 'disabled'}, AJAXRESPONSE[0][0]]
-			['td', {}, AJAXRESPONSE[0][1]]
-		]]
-		// etc
-	]], container)
+	var table = simple('table')
+	// loop through the response:
+	simple.last(table, simple('tr', [
+		simple('td', {"class": 'disabled'}, AJAXRESPONSE[i][0]),
+		simple('td', {"class": 'email'}, AJAXRESPONSE[i][1])
+	])
+
+See the example in `index.html` for all uses: attributes, events, children
+
+### DOM additions
+
+SimpleDOM doesn't alter prototypes. It does add a few handy DOM transparencies:
+
+* `simple.event( node, type, callback )`
+* `simple.first( referenceNode, newNode )`
+* `simple.last( referenceNode, newNode )`
+* `simple.before( referenceNode, newNode )`
+* `simple.after( referenceNode, newNode )`
+* `simple.replace( oldNode, newNode )`

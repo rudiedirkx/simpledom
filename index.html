@@ -9,46 +9,35 @@
 
 <body>
 
-<script>
-window.onload = function() {
-	/**
-	 * HTML:
-		<div>
-			<p>Hi there, <a href title>YourNameHere</p>.</p>
-			<p>Second paragraphs always suck...</p>
-		</div>
-	 */
-
-	/**
-	 * JSON:
-	 */
-	elements = ['div', {}, {}, [
-		['p', {}, {}, [
-			'Hi there, ',
-			['a', {href: '/blog-user/view/3', title: 'This is you!'}, {}, 'YourNameHere'],
-			'.'
-		]],
-		['p', {}, {}, ['Second paragraphs always suck...']]
-	]]
-
-	simpledom(elements, document.body)
-
-	/**
-	 * and a table
-	 */
-	simpledom(['table', {border: 1, cellpadding: 5, cellspacing: 0}, {click: function(){ alert(this.outerHTML); alert(this.innerText) }}, [
-		['tr', {}, {}, [
-			['td', {class: 'disabled'}, {}, 'data 1'],
-			['td', {}, {}, 'data 2']
-		]],
-		['tr', {}, {}, [
-			['td', {class: 'disabled'}, {}, 'data 3'],
-			['td', {}, {}, 'data 4']
-		]]
-		// etc
-	]], document.body)
-
-}
+<script id=s1>
+div = simple('div', {id: 'd1'}, [
+	simple('p', [
+		'Hi there, ',
+		simple(
+			'a',
+			{
+				href: '#',
+				title: 'Oele bla'
+			},
+			{
+				click: [
+					function(e) {
+						alert(e);
+						e.preventDefault();
+					},
+					function(e) {
+						alert(this.nodeName + ' == ' + e.target.nodeName + ', because this == e.target');
+					}
+				]
+			},
+			'YourNameHere'
+		),
+		'.'
+	]),
+	simple('p', 'Second paragraphs always suck...')
+])
+window.console && console.log && console.log(div)
+simple.before(s1, div) // inject new div into <body> before <script>
 </script>
 
 </body>
