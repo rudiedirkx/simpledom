@@ -3,7 +3,7 @@
 
 	function each( iterable, callback ) {
 		for ( var x in iterable ) {
-			if ( iterable.hasOwnProperty(x) ) {
+			if ( iterable.hasOwnProperty(x) && null != iterable[x] ) {
 				callback(iterable[x], x, iterable)
 			}
 		}
