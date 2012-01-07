@@ -4,13 +4,36 @@
 <head>
 	<title>simpledom</title>
 	<meta charset="utf-8" />
+	<style>
+	p, h1, h2, h3 {
+		margin: 20px 0;
+	}
+	p:first-child, h1:first-child, h2:first-child, h3:first-child {
+		margin-top: 0;
+	}
+	p:last-child, h1:last-child, h2:last-child, h3:last-child {
+		margin-bottom: 0;
+	}
+	div[border] {
+		padding: 20px;
+		border: solid 2px #aaa;
+	}
+	td, th {
+		padding: 4px 6px;
+	}
+	</style>
 	<script src="simpledom.js"></script>
 </head>
 
 <body>
 
+<h1>Simple DOM</h1>
+
+<!-- Cool thing 1 -- Sumper Simple DOM creation -->
+<h2>1. Sumper Simple DOM creation</h2>
+
 <script id=s1>
-div = simple('div', {id: 'd1'}, [
+div = simple('div', {id: 'd1', border: '', title: 'This <div> is generated and inserted with simple().'}, [
 	simple('p', [
 		'Hi there, ',
 		simple(
@@ -39,6 +62,52 @@ div = simple('div', {id: 'd1'}, [
 window.console && console.log && console.log(div)
 simple.before(s1, div) // inject new div into <body> before <script>
 </script>
+
+<p>Creating nodes with a simple, intuitive structure with only 1 function: <code>simple</code>.</p>
+
+
+<!-- Cool thing 2 -- Sumper Simple Templating in JS -->
+<h2>2. Sumper Simple Templating in JS</h2>
+
+<script id="usertable" type="tmpl">
+<h3><?=title?></h3>
+<table border=1>
+    <? for ( var i=0, L=rows.length; i<L; i++ ) { var row=rows[i]; ?>
+        <tr>
+            <? for ( var x in row ) { ?>
+                <? var el = 'name' == x ? 'th' : 'td'; ?>
+                <<?=el?>><?=row[x]?></<?=el?>>
+            <? } ?>
+        </tr>
+    <? } ?>
+</table>
+</script>
+
+<div id="tmpl-content" border title="The contents of this <div> are created by simple.tmpl() and inserted with node.innerHTML."></div>
+
+<script>
+var data = {
+    title: 'Some users...',
+    rows: [
+        {name: 'Jaap', age: 32, gender: 'M'},
+        {name: 'Marieke', age: 27, gender: 'F'},
+        {name: 'Sanne', age: 17, gender: 'F'}
+    ]
+};
+
+// compile
+var tpl = simple.tmpl('usertable');
+console.log(tpl);
+
+// render
+var html = tpl(data);
+console.log(html);
+
+// show
+document.getElementById('tmpl-content').innerHTML = html;
+</script>
+
+<p>Creating and inserting HTML with a super simple template format: <code>&lt;? code ?&gt;</code> and <code>&lt;?=var?&gt;</code>.</p>
 
 </body>
 
