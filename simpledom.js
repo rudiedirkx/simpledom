@@ -33,10 +33,10 @@
 
 	// create 1 simple element (with children)
 	simple = function( type ) {
-		var attributes, events, content
+		var i, attributes, events, content, html = simple.html, el, div
 
 		// arguments
-		for ( var i=1, L=arguments.length; i<L; i++ ) {
+		for ( i=1, L=arguments.length; i<L; i++ ) {
 			if ( is.attributes(arguments[i]) ) {
 				attributes = arguments[i]
 			}
@@ -48,13 +48,18 @@
 			}
 		}
 
+		if ( null != attributes && 'boolean' == typeof attributes.html ) {
+			html = attributes.html
+		}
+log('do html', html)
+
 		// create node
-		var el = document.createElement(type)
+		el = document.createElement(type)
 
 		// assign attributes
 		if ( attributes ) {
 			each(attributes, function(value, name) {
-				el.setAttribute(name, value)
+				el.setAttribute(name, true === value ? '' : String(value))
 			})
 		}
 
@@ -62,7 +67,7 @@
 		if ( events ) {
 			each(events, function(evs, name) {
 				evs instanceof Array || (evs = [evs])
-				for ( var i=0, L=evs.length; i<L; i++ ) {
+				for ( i=0, L=evs.length; i<L; i++ ) {
 					simple.event(el, name, evs[i])
 				}
 			})
@@ -71,18 +76,32 @@
 		// append children
 		if ( content ) {
 			content instanceof Array || (content = [content])
-			for ( var i=0, L=content.length; i<L; i++ ) {
+			for ( i=0, L=content.length; i<L; i++ ) {
 				if ( content[i].nodeName ) {
 					el.appendChild(content[i])
 				}
 				else {
-					el.appendChild(document.createTextNode(''+content[i]))
+					// Thank god, NO HTML!
+					if ( !html ) {
+						el.appendChild(document.createTextNode(String(content[i])))
+					}
+					// Fuck. Let's render this fucker.
+					else {
+						div = document.createElement('div')
+						document.body.appendChild(div)
+						div.innerHTML = content[i]
+						while ( div.childNodes.length ) {
+							el.appendChild(div.firstChild)
+						}
+					}
 				}
 			}
 		}
 
 		return el
 	}
+
+	simple.html = false
 
 	// event assignment + handling
 

@@ -22,6 +22,11 @@
 		padding: 4px 6px;
 	}
 	</style>
+	<script>
+	log = function() {
+		window.console && console.log && console.log.apply && console.log.apply(console, arguments)
+	}
+	</script>
 	<script src="simpledom.js"></script>
 </head>
 
@@ -30,7 +35,7 @@
 <h1>Simple DOM</h1>
 
 <!-- Cool thing 1 -- Sumper Simple DOM creation -->
-<h2>1. Sumper Simple DOM creation</h2>
+<h2>1. Super Simple DOM creation</h2>
 
 <script id=s1>
 div = simple('div', {id: 'd1', border: '', title: 'This <div> is generated and inserted with simple().'}, [
@@ -40,7 +45,8 @@ div = simple('div', {id: 'd1', border: '', title: 'This <div> is generated and i
 			'a',
 			{
 				href: '#',
-				title: 'Oele bla'
+				title: 'Oele bla',
+				html: false
 			},
 			{
 				click: [
@@ -53,13 +59,13 @@ div = simple('div', {id: 'd1', border: '', title: 'This <div> is generated and i
 					}
 				]
 			},
-			'YourNameHere'
+			'Cheater Mc<textarea>'
 		),
-		'.'
+		'. << No HTML rendered there.'
 	]),
-	simple('p', 'Second paragraphs always suck...')
+	simple('p', {html: true}, 'Second paragraphs <strong>always</strong> suck... << Hey, there\'s HTML rendered there!')
 ])
-window.console && console.log && console.log(div)
+log(div)
 simple.before(s1, div) // inject new div into <body> before <script>
 </script>
 
@@ -67,7 +73,7 @@ simple.before(s1, div) // inject new div into <body> before <script>
 
 
 <!-- Cool thing 2 -- Sumper Simple Templating in JS -->
-<h2>2. Sumper Simple Templating in JS</h2>
+<h2>2. Super Simple Templating in JS</h2>
 
 <script id="usertable" type="tmpl">
 <h3><?=title?></h3>
@@ -97,11 +103,11 @@ var data = {
 
 // compile
 var tpl = simple.tmpl('usertable');
-console.log(tpl);
+log(tpl);
 
 // render
 var html = tpl(data);
-console.log(html);
+log(html);
 
 // show
 document.getElementById('tmpl-content').innerHTML = html;
