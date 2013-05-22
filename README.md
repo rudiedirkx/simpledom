@@ -1,7 +1,6 @@
-
 # SimpleDOM
 
-**A very inobtrusive way to simplyfy (create) the HTML DOM.**
+**A very unobtrusive way to simplyfy (create) the HTML DOM.**
 
 ### Use case
 
