@@ -51,7 +51,6 @@
 		if ( null != attributes && 'boolean' == typeof attributes.html ) {
 			html = attributes.html
 		}
-log('do html', html)
 
 		// create node
 		el = document.createElement(type)
